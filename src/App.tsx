@@ -155,7 +155,7 @@ export function App() {
     scenePass.setMRT(
       mrt({
         output,
-        bloomIntensity: float(0.2), // default bloom intensity
+        bloomIntensity: float(0.1), // default bloom intensity
       }),
     );
 
