@@ -1,7 +1,7 @@
 import { hashBlur } from "three/examples/jsm/tsl/display/hashBlur.js";
 import { mix, reflector, sample, texture, uniform, uv, vec4 } from "three/tsl";
 import * as THREE from "three/webgpu";
-import { getShapeGeometry } from "./shape";
+import { getShapeGeometry } from "../geometry/shape";
 
 export const getReflectMaterial = (
   scene: THREE.Scene,
@@ -39,6 +39,8 @@ export const getReflectMaterial = (
   const reflectionMixFactor = reflectionMask.mul(roughness.mul(2).min(1));
 
   // const verticalNode = vec4(0, 0, 0, 0).add(verticalReflector);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const verticalNode = mix(verticalReflector.rgb.mul(0.1), reflectionBlurred.rgb, reflectionMixFactor);
 
   const planeBack = new THREE.Mesh(

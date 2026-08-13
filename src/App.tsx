@@ -10,6 +10,7 @@ import { DRACOLoader, GLTFLoader, OrbitControls } from "three/examples/jsm/Addon
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
 
 import { createReflectMaterials } from "./materials";
+import { createText } from "./helpers/create-text";
 
 export function App() {
   useEffect(() => {
@@ -120,7 +121,7 @@ export function App() {
         } else if (mesh.name.includes("Button")) {
           material.emissiveIntensity = 0;
         } else if (mesh.name === "ScrenJson") {
-          console.log(mesh.position);
+          createText(scene, mesh.position, mesh.rotation);
         }
       });
 

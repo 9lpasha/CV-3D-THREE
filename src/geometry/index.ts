@@ -1,0 +1,1 @@
+export { getShapeGeometry } from "./shape";
