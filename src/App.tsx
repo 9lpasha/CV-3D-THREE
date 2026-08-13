@@ -27,7 +27,7 @@ export function App() {
      */
     const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.x = 2.2;
-    camera.position.y = 2.7;
+    camera.position.y = 1.7;
     camera.position.z = 2.2;
     scene.add(camera);
 
@@ -108,15 +108,12 @@ export function App() {
         } else if (mesh.name === "GlowLine") {
           material.emissiveIntensity = 0.3;
         } else if (mesh.name === "TextJson") {
-          material.emissiveIntensity = 0;
+          material.emissiveIntensity = 2;
         } else if (mesh.name === "ClientPlatform") {
           mesh.material = createReflectMaterials(scene, mesh);
 
-          console.log(mesh.position);
-
           (mesh.material as THREE.MeshStandardMaterial).color = new THREE.Color(0x122866);
         } else if (mesh.name === "GreenJson") {
-          console.log(mesh.position);
           material.emissiveIntensity = 0.01;
         } else if (mesh.name.includes("Button")) {
           material.emissiveIntensity = 0;
@@ -124,8 +121,6 @@ export function App() {
           createText(scene, mesh.position, mesh.rotation);
         }
       });
-
-      console.log(gltf.scene.position);
 
       scene.add(gltf.scene);
     });
@@ -151,6 +146,7 @@ export function App() {
     controls.enableZoom = false;
     controls.minPolarAngle = Math.PI / 2 - 0.7;
     controls.maxPolarAngle = Math.PI / 2 - 0.1;
+    controls.target.set(0, 0.5, 0);
 
     /**
      * Post-Processing
