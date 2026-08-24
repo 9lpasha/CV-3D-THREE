@@ -2,8 +2,12 @@ import { FontLoader } from "three/examples/jsm/Addons.js";
 import * as THREE from "three/webgpu";
 
 import font from "../assets/helvetiker_regular.typeface.json?url";
+import { getSize } from "./get-size";
 
-export const createText = (scene: THREE.Scene, position: THREE.Vector3, rotation: THREE.Euler) => {
+export const createText = (scene: THREE.Scene, mesh: THREE.Mesh) => {
+  const { position, rotation } = mesh;
+  const size = getSize(mesh);
+
   const loader = new FontLoader();
 
   loader.load(font, (font) => {
@@ -73,9 +77,9 @@ export const createText = (scene: THREE.Scene, position: THREE.Vector3, rotation
       x += advance + letterSpacing;
     }
 
-    group.position.set(position.x - 1, position.y + 1.24, position.z + 0.14);
+    group.position.set(position.x - 0.3, position.y + size.y * 0.25, position.z + 0.3);
 
-    group.rotation.set(rotation.x, rotation.y + 0.77, rotation.z);
+    group.rotation.set(rotation.x, rotation.y, rotation.z);
 
     scene.add(group);
   });

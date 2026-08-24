@@ -25,11 +25,21 @@ export function App() {
     /**
      * Camera
      */
-    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.x = 2.2;
-    camera.position.y = 1.7;
-    camera.position.z = 2.2;
+    const camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.x = 10.2;
+    camera.position.y = 6.7;
+    camera.position.z = 7;
     scene.add(camera);
+
+    /**
+     * Controls
+     */
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.enableZoom = false;
+    controls.minPolarAngle = Math.PI / 2 - 0.7;
+    controls.maxPolarAngle = Math.PI / 2 - 0.1;
+    controls.target.set(0, 0.5, -3);
 
     /**
      * Renderer
@@ -73,7 +83,7 @@ export function App() {
     scene.add(light);
 
     // удаление искажений
-    light.shadow.normalBias = 0.01;
+    light.shadow.normalBias = 0.02;
 
     // четкость теней
     light.shadow.mapSize.set(2048, 2048);
@@ -103,22 +113,26 @@ export function App() {
 
         material.emissiveIntensity = 0;
 
-        if (mesh.name === "ClientText") {
+        if (material.name === "WhiteText") {
           material.emissiveIntensity = 0;
-        } else if (mesh.name === "GlowLine") {
+        } else if (material.name === "GreenGlow") {
           material.emissiveIntensity = 0.3;
-        } else if (mesh.name === "TextJson") {
+        } else if (material.name === "GreenText") {
           material.emissiveIntensity = 2;
-        } else if (mesh.name === "ClientPlatform") {
+        } else if (
+          mesh.name === "ClientPlatform" ||
+          mesh.name === "ServerPlatform" ||
+          mesh.name === "NetworkPlatform"
+        ) {
           mesh.material = createReflectMaterials(scene, mesh);
 
           (mesh.material as THREE.MeshStandardMaterial).color = new THREE.Color(0x122866);
-        } else if (mesh.name === "GreenJson") {
+        } else if (material.name === "Green") {
           material.emissiveIntensity = 0.01;
         } else if (mesh.name.includes("Button")) {
           material.emissiveIntensity = 0;
-        } else if (mesh.name === "ScrenJson") {
-          createText(scene, mesh.position, mesh.rotation);
+        } else if (mesh.name === "ScreenJson") {
+          createText(scene, mesh);
         }
       });
 
@@ -139,14 +153,6 @@ export function App() {
       renderer.setSize(sizes.width, sizes.height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
-
-    // Controls
-    const controls = new OrbitControls(camera, canvas);
-    controls.enableDamping = true;
-    controls.enableZoom = false;
-    controls.minPolarAngle = Math.PI / 2 - 0.7;
-    controls.maxPolarAngle = Math.PI / 2 - 0.1;
-    controls.target.set(0, 0.5, 0);
 
     /**
      * Post-Processing
