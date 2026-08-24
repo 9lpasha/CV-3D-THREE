@@ -1,0 +1,1 @@
+export const BLUE_METALLIC_COLOR = 0x122856;
