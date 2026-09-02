@@ -5,6 +5,13 @@ import { quality } from "../../constants/quality";
 
 export const FLOW_SPEED = 0.08;
 
+/**
+ * Создание потока частиц (от Сервера к Клиенту)
+ * @param scene
+ * @param from - Объект откуда начинается поток
+ * @param via - Объект через который проходит поток
+ * @param to - Объект куда заканчивается поток
+ */
 export const createParticleFlow = (
   scene: THREE.Scene,
   from: THREE.Object3D,

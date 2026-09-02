@@ -125,6 +125,7 @@ export const createFlowCube = async (
   via: THREE.Object3D,
   to: THREE.Object3D,
   obstacles: THREE.Object3D[] = [],
+  mainLightsNode: THREE.LightsNode,
   onArrive?: (chars: number) => void,
 ) => {
   const cubeCount = quality.cubeCount;
@@ -153,6 +154,7 @@ export const createFlowCube = async (
   for (let i = 0; i < cubeCount; i++) {
     const opacityNode = uniform(1, "float");
     const cubeMaterial = new THREE.MeshStandardNodeMaterial({
+      lightsNode: mainLightsNode,
       color: 0x015cff,
       emissive: 0x015cff,
       emissiveIntensity: 0.5,
@@ -163,6 +165,7 @@ export const createFlowCube = async (
     cubeMaterial.opacityNode = opacityNode;
 
     const platformMaterial = new THREE.MeshStandardNodeMaterial({
+      lightsNode: mainLightsNode,
       color: BLUE_METALLIC_COLOR,
       roughness: 0.7,
       metalness: 0.35,

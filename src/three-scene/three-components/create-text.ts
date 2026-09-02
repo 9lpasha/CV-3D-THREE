@@ -3,7 +3,7 @@ import * as THREE from "three/webgpu";
 
 import fontUrl from "../../assets/helvetiker_regular.typeface.json?url";
 import { quality } from "../../constants/quality";
-import { getSize } from "../get-size";
+import { getSize } from "../../helpers";
 
 type ScreenFont = {
   data: {

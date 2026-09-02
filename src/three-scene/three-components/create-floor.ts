@@ -6,8 +6,13 @@ export const createFloor = (
   scene: THREE.Scene,
   lightsNode: THREE.LightsNode,
   y: number,
-  center: { x: number; z: number },
+  model: THREE.Object3D,
+  gridHelper: THREE.GridHelper,
 ) => {
+  const box = new THREE.Box3().setFromObject(model);
+  const center = box.getCenter(new THREE.Vector3());
+  const floorY = box.min.y - 0.004;
+
   const material = new THREE.MeshStandardNodeMaterial({
     roughness: 0.92,
     metalness: 0.08,
@@ -21,6 +26,8 @@ export const createFloor = (
   floor.receiveShadow = true;
   floor.castShadow = false;
   scene.add(floor);
+
+  gridHelper.position.set(center.x, floorY + 0.008, center.z);
 
   return floor;
 };

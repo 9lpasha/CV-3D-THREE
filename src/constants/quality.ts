@@ -6,9 +6,9 @@ export const isMobile = isMobileUa || (hasCoarsePointer && isSmallViewport);
 
 export const quality = isMobile
   ? {
-      antialias: true,
-      pixelRatio: Math.min(window.devicePixelRatio, 2),
-      shadows: true,
+      antialias: false,
+      pixelRatio: Math.min(1),
+      shadows: false,
       shadowMapSize: 512,
       bloom: false,
       reflections: false,
@@ -21,6 +21,8 @@ export const quality = isMobile
       floorSegments: 24,
       gridDivisions: 16,
       platformRadiusSegments: 1,
+      screenPointLights: 2,
+      antennaPointLights: 1,
     }
   : {
       antialias: true,
@@ -38,4 +40,6 @@ export const quality = isMobile
       floorSegments: 64,
       gridDivisions: 32,
       platformRadiusSegments: 4,
+      screenPointLights: 9,
+      antennaPointLights: 4,
     };
