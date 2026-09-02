@@ -27,7 +27,7 @@ export const quality = isMobile
   : {
       antialias: true,
       pixelRatio: Math.min(window.devicePixelRatio, 2),
-      shadows: true,
+      shadows: false,
       shadowMapSize: 2048,
       bloom: true,
       reflections: true,
