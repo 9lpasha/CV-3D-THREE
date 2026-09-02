@@ -6,13 +6,13 @@ export const isMobile = isMobileUa || (hasCoarsePointer && isSmallViewport);
 
 export const quality = isMobile
   ? {
-      antialias: false,
-      pixelRatio: Math.min(1),
+      antialias: true,
+      pixelRatio: Math.min(window.devicePixelRatio, 2),
       shadows: false,
       shadowMapSize: 512,
       bloom: false,
       reflections: false,
-      particleCount: 120,
+      particleCount: 480,
       cubeCount: 4,
       cubeTextureSize: 64,
       cubeCastShadow: false,
