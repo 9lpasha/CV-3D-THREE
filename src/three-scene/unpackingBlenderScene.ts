@@ -3,9 +3,9 @@ import { BLUE_METALLIC_COLOR } from "../constants/colors";
 import { getSize } from "../helpers";
 import { quality } from "../constants/quality";
 import { addAntenaPointLight, addScreenPointLight } from "./three-components/lights";
-import { createTopFaceReflection } from "../materials";
 import { createText } from "./three-components";
 import type { ScreenTextController } from "./three-components";
+import { createPlatformReflections } from "./reflections";
 
 export const unpackingBlenderScene = async (
   scene: THREE.Scene,
@@ -21,6 +21,7 @@ export const unpackingBlenderScene = async (
   let routerPlatform: THREE.Mesh | undefined;
   let routerPlatformLights: THREE.Mesh | undefined;
   let screenJson: THREE.Mesh | undefined;
+  let screenJsonDark: THREE.Mesh | undefined;
   let machine: THREE.Mesh | undefined;
   let machineLights: THREE.Mesh | undefined;
   let clientPlatform: THREE.Mesh | undefined;
@@ -29,7 +30,7 @@ export const unpackingBlenderScene = async (
   let screenTextPromise: Promise<ScreenTextController> | undefined;
 
   const textJobs: Promise<unknown>[] = [];
-  const reflections: ReturnType<typeof createTopFaceReflection>[] = [];
+  const reflections: ReturnType<typeof createPlatformReflections> = [];
 
   model.traverse((child) => {
     child.castShadow = quality.modelCastShadow || child.name.includes("Platform");
@@ -48,6 +49,8 @@ export const unpackingBlenderScene = async (
       machineLights = child as THREE.Mesh;
     } else if (child.name === "ScreenJson") {
       screenJson = child as THREE.Mesh;
+    } else if (child.name === "ScreenJsonDark") {
+      screenJsonDark = child as THREE.Mesh;
     } else if (child.name === "ServerGreenJson") {
       serverGreenJson = child as THREE.Mesh;
     } else if (child.name === "ServerGreenJsonText") {
@@ -97,36 +100,6 @@ export const unpackingBlenderScene = async (
       mesh.receiveShadow = false;
       mesh.castShadow = false;
 
-      // if (mesh.name !== "ClientPlatform") return;
-
-      if (quality.reflections) {
-        // createReflectMaterials(scene, mesh, mainLightsNode);
-        const size = getSize(mesh);
-        const baseMaterial = new THREE.MeshStandardNodeMaterial({
-          ...material,
-          color: new THREE.Color(BLUE_METALLIC_COLOR),
-          lightsNode: mainLightsNode,
-        });
-
-        const reflectionMesh = createTopFaceReflection({
-          planePosition: {
-            x: mesh.position.x,
-            z: mesh.position.z,
-            y: mesh.position.y + size.y / 2 + 0.001,
-          },
-          planeRotation: mesh.rotation,
-          planeSize: getSize(mesh),
-          baseMaterial,
-          lightDirection: light.position,
-          lightColor: light.color,
-          ambientIntensity: ambientLight.intensity,
-        });
-        reflectionMesh.mesh.receiveShadow = false;
-        scene.add(reflectionMesh.mesh);
-
-        reflections.push(reflectionMesh);
-      }
-
       mesh.material = new THREE.MeshStandardMaterial({
         ...material,
         color: new THREE.Color(BLUE_METALLIC_COLOR),
@@ -166,27 +139,13 @@ export const unpackingBlenderScene = async (
       });
     }
 
-    if (
-      // mesh.name === "ClientPlatform" ||
-      // mesh.name === "ServerPlatform" ||
-      // mesh.name === "NetworkPlatform" ||
-      mesh.name === "GreenJson" ||
-      mesh.name === "ServerGreenJson"
-    ) {
+    if (mesh.name === "GreenJson" || mesh.name === "ServerGreenJson") {
       mesh.material = new THREE.MeshStandardNodeMaterial({
         ...material,
         lightsNode: mainLightsNode,
         roughness: 0.7,
       });
     }
-
-    // if (mesh.name === "Machine") {
-    //   mesh.material = new THREE.MeshStandardNodeMaterial({
-    //     ...material,
-    //     lightsNode: mainLightsNode,
-    //     roughness: 0.7,
-    //   });
-    // }
 
     if (mesh.name === "NetworkPlatform") {
       const size = getSize(mesh);
@@ -210,6 +169,18 @@ export const unpackingBlenderScene = async (
     }
   });
 
+  if (quality.reflections) {
+    reflections.push(
+      ...createPlatformReflections(
+        scene,
+        [clientPlatform, serverPlatform, networkPlatform],
+        mainLightsNode,
+        light,
+        ambientLight,
+      ),
+    );
+  }
+
   return {
     serverGreenJson: serverGreenJson as THREE.Mesh,
     serverGreenJsonText: serverGreenJsonText as THREE.Mesh,
@@ -218,6 +189,7 @@ export const unpackingBlenderScene = async (
     routerPlatform: routerPlatform as THREE.Mesh,
     routerPlatformLights: routerPlatformLights as THREE.Mesh,
     screenJson: screenJson as THREE.Mesh,
+    screenJsonDark: screenJsonDark as THREE.Mesh,
     machine: machine as THREE.Mesh,
     machineLights: machineLights as THREE.Mesh,
     clientPlatform: clientPlatform as THREE.Mesh,

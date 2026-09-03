@@ -8,11 +8,12 @@ import "./App.css";
 import jsonFlow from "./assets/json_flow.glb";
 import { Hud } from "./components/hud";
 import { Loader } from "./components/loader";
+import { QualityMenu } from "./components/quality-menu";
 import { quality } from "./constants/quality";
 import { createFloor, createFlowCube, createParticleFlow } from "./three-scene/three-components";
-import { createReflections, unpackingBlenderScene } from "./three-scene";
-import { createBaseScene } from "./three-scene";
-import { createPostProcessing } from "./three-scene";
+import { createBaseScene, createPostProcessing, createMirroredObjects, unpackingBlenderScene } from "./three-scene";
+import { useMenuToggle } from "./hooks";
+import { applyReflections } from "./helpers/menu";
 
 const stats = new Stats();
 stats.dom.className = "stats";
@@ -20,12 +21,15 @@ document.body.appendChild(stats.dom);
 
 export function App() {
   const [ready, setReady] = useState(false);
+  const [reflectionsEnabled, setReflectionsEnabled] = useState(quality.reflections);
+  const sceneToggles = useMenuToggle();
 
   useEffect(() => {
     const canvas = document.querySelector("#canvas") as HTMLCanvasElement;
     let disposed = false;
 
-    const { camera, scene, renderer, controls, mainLightsNode, ambientLight, light } = createBaseScene(canvas);
+    const baseSceneObjects = createBaseScene(canvas);
+    const { camera, scene, renderer, controls, mainLightsNode, ambientLight, light } = baseSceneObjects;
 
     let unpackedSceneObjects: Awaited<ReturnType<typeof unpackingBlenderScene>> | undefined;
     const mirrorScene = new THREE.Scene();
@@ -51,13 +55,24 @@ export function App() {
     const animateActions: ((elapsedTime: number) => void)[] = [];
 
     const { renderFrame, compileFrame } = createPostProcessing(scene, camera, renderer);
+    const drawingSize = new THREE.Vector2();
+
+    sceneToggles.current = {
+      setReflections: (value) =>
+        applyReflections(
+          value,
+          baseSceneObjects,
+          unpackedSceneObjects as Awaited<ReturnType<typeof unpackingBlenderScene>>,
+          drawingSize,
+        ),
+    };
 
     function tick() {
       const elapsed = clock.getElapsedTime();
       animateActions.forEach((action) => action(elapsed));
 
       controls.update();
-      if (unpackedSceneObjects?.reflections && mirrorScene) {
+      if (quality.reflections && unpackedSceneObjects?.reflections.length) {
         unpackedSceneObjects.reflections.forEach((reflection) => {
           reflection.update(camera);
           reflection.render(renderer, mirrorScene);
@@ -88,7 +103,7 @@ export function App() {
 
       /** Отражения */
       if (quality.reflections) {
-        createReflections(unpackedSceneObjects, mirrorScene);
+        createMirroredObjects(unpackedSceneObjects, mirrorScene);
       }
 
       /** Создание пола */
@@ -129,8 +144,6 @@ export function App() {
     };
     document.addEventListener("visibilitychange", onVisibility);
 
-    const drawingSize = new THREE.Vector2();
-
     const onResize = () => {
       const sizes = {
         width: window.innerWidth,
@@ -154,6 +167,7 @@ export function App() {
 
     return () => {
       disposed = true;
+      sceneToggles.current = null;
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
       renderer.setAnimationLoop(null);
@@ -164,6 +178,14 @@ export function App() {
   return (
     <>
       <canvas id="canvas"></canvas>
+      <QualityMenu
+        reflections={reflectionsEnabled}
+        disabled={!ready}
+        onReflectionsChange={(value) => {
+          setReflectionsEnabled(value);
+          sceneToggles.current?.setReflections(value);
+        }}
+      />
       <Hud />
       <Loader ready={ready} />
     </>

@@ -25,6 +25,7 @@ export const createFloor = (
   floor.position.set(center.x, y, center.z);
   floor.receiveShadow = true;
   floor.castShadow = false;
+  floor.userData.receiveShadowOnly = true;
   scene.add(floor);
 
   gridHelper.position.set(center.x, floorY + 0.008, center.z);
