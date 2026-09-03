@@ -73,6 +73,13 @@ export const unpackingBlenderScene = async (
       material.color = new THREE.Color(BLUE_METALLIC_COLOR);
     }
 
+    if (material.name === "BlueMetallicDark") {
+      mesh.material = new THREE.MeshStandardNodeMaterial({
+        ...material,
+        roughness: 0.7,
+      });
+    }
+
     // интенсивность свечения
     if (material.name === "WhiteText") {
       material.emissiveIntensity = 0;

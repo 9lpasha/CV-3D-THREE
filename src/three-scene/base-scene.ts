@@ -25,8 +25,8 @@ export const createBaseScene = (canvas: HTMLCanvasElement) => {
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.enableZoom = false;
-  // controls.minPolarAngle = Math.PI / 2 - 0.4;
-  // controls.maxPolarAngle = Math.PI / 2 - 0.4;
+  controls.minPolarAngle = Math.PI / 2 - 0.4;
+  controls.maxPolarAngle = Math.PI / 2 - 0.4;
 
   controls.target.set(0, 0.5, -3.5);
 
