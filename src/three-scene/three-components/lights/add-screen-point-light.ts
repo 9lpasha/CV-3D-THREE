@@ -36,7 +36,7 @@ export const addScreenPointLight = (scene: THREE.Scene, mesh: THREE.Mesh, withGr
     const pointLight = new THREE.PointLight(0x00ff00, 0.4, 10);
     pointLight.position.set(
       mesh.position.x + (size.x / 2 + 0.3) * cosY,
-      mesh.position.y - size.y / 2 + 0.1,
+      mesh.position.y - size.y / 2 + 0.4,
       mesh.position.z + (size.x / 2 - 0.8) * sinY,
     );
     scene.add(pointLight);

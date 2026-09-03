@@ -144,8 +144,8 @@ export const unpackingBlenderScene = async (
       const size = getSize(mesh);
       const pointLight = new THREE.PointLight(0x00ff00, 0.4, 1);
       pointLight.position.set(
-        mesh.position.x - (size.x / 2 - 0.2),
-        mesh.position.y - size.y / 2 + 0.3,
+        mesh.position.x - (size.x / 2 - 0.3),
+        mesh.position.y - size.y / 2 + 0.2,
         mesh.position.z + 0.5,
       );
       scene.add(pointLight);
@@ -162,31 +162,31 @@ export const unpackingBlenderScene = async (
       mesh.material = new THREE.MeshStandardNodeMaterial({
         ...material,
         color: new THREE.Color(BLUE_METALLIC_COLOR),
-        roughness: 0.7,
+        roughness: 0.8,
       });
     }
 
     if (
-      mesh.name === "ClientPlatform" ||
-      mesh.name === "ServerPlatform" ||
-      mesh.name === "NetworkPlatform" ||
+      // mesh.name === "ClientPlatform" ||
+      // mesh.name === "ServerPlatform" ||
+      // mesh.name === "NetworkPlatform" ||
       mesh.name === "GreenJson" ||
       mesh.name === "ServerGreenJson"
     ) {
       mesh.material = new THREE.MeshStandardNodeMaterial({
         ...material,
         lightsNode: mainLightsNode,
-        roughness: 0.5,
+        roughness: 0.7,
       });
     }
 
-    if (mesh.name === "Machine") {
-      mesh.material = new THREE.MeshStandardNodeMaterial({
-        ...material,
-        lightsNode: mainLightsNode,
-        roughness: 0.5,
-      });
-    }
+    // if (mesh.name === "Machine") {
+    //   mesh.material = new THREE.MeshStandardNodeMaterial({
+    //     ...material,
+    //     lightsNode: mainLightsNode,
+    //     roughness: 0.7,
+    //   });
+    // }
 
     if (mesh.name === "NetworkPlatform") {
       const size = getSize(mesh);
@@ -197,7 +197,7 @@ export const unpackingBlenderScene = async (
       mesh.material = new THREE.MeshStandardNodeMaterial({
         ...material,
         color: new THREE.Color(BLUE_METALLIC_COLOR),
-        roughness: 0.5,
+        roughness: 0.7,
       });
     }
 
