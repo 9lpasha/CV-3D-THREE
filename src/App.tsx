@@ -58,13 +58,10 @@ export function App() {
     const drawingSize = new THREE.Vector2();
 
     sceneToggles.current = {
-      setReflections: (value) =>
-        applyReflections(
-          value,
-          baseSceneObjects,
-          unpackedSceneObjects as Awaited<ReturnType<typeof unpackingBlenderScene>>,
-          drawingSize,
-        ),
+      setReflections: (value) => {
+        if (!unpackedSceneObjects) return;
+        applyReflections(value, baseSceneObjects, unpackedSceneObjects, drawingSize);
+      },
     };
 
     function tick() {
@@ -102,9 +99,7 @@ export function App() {
       await Promise.all(textJobs);
 
       /** Отражения */
-      if (quality.reflections) {
-        createMirroredObjects(unpackedSceneObjects, mirrorScene);
-      }
+      createMirroredObjects(unpackedSceneObjects, mirrorScene);
 
       /** Создание пола */
       createFloor(scene, mainLightsNode, -0.004, model, gridHelper);
